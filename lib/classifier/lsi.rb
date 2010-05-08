@@ -11,7 +11,8 @@ begin
    
 rescue LoadError
 	warn "Notice: for 10x faster LSI support, please install http://rb-gsl.rubyforge.org/"
-	require 'classifier/extensions/vector'	
+	require 'classifier/extensions/vector'
+        require 'Matrix'
 end
    
 require 'classifier/lsi/word_list'
@@ -287,7 +288,7 @@ module Classifier
         s[ord] = 0.0 if s[ord] < s_cutoff
       end
       # Reconstruct the term document matrix, only with reduced rank
-      u * Matrix.diag( s ) * v.trans
+      if $GSL then u * GSL::Matrix.diag( s ) * v.trans else u * Matrix.diagonal(s) * v.trans end 
     end
     
     def node_for_content(item, &block)    
